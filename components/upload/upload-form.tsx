@@ -31,18 +31,64 @@ export default function UploadForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [freeLimitReached, setFreeLimitReached] = useState(false);
+  const [isCheckingPlan, setIsCheckingPlan] = useState(true);
   const router = useRouter();
   const { userId } = useAuth();
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress || user?.emailAddresses?.[0]?.emailAddress || undefined;
 
-  // Check free usage count on mount
+  // Check user plan and free usage count on mount
   useEffect(() => {
-    const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
-    if (usage >= 2) {
-      setFreeLimitReached(true);
+    async function checkUserPlan() {
+      if (!email) {
+        setIsCheckingPlan(false);
+        return;
+      }
+
+      try {
+        // Fetch user's plan from the database
+        const response = await fetch('/api/user/plan', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email })
+        });
+
+        if (response.ok) {
+          const { planId } = await response.json();
+          
+          // Only check localStorage for Free plan users
+          if (planId === 'free') {
+            const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
+            if (usage >= 2) {
+              setFreeLimitReached(true);
+            }
+          } else {
+            // Basic and Pro users can always upload
+            setFreeLimitReached(false);
+          }
+        } else {
+          // If API fails, fallback to localStorage check
+          const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
+          if (usage >= 2) {
+            setFreeLimitReached(true);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking user plan:', error);
+        // Fallback to localStorage check
+        const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
+        if (usage >= 2) {
+          setFreeLimitReached(true);
+        }
+      } finally {
+        setIsCheckingPlan(false);
+      }
     }
-  }, []);
+
+    checkUserPlan();
+  }, [email]);
 
   const { startUpload, routeConfig } = useUploadThing("pdfUploader", {
     onClientUploadComplete: () => {
@@ -61,13 +107,13 @@ export default function UploadForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Check free usage count before allowing upload
-    const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
-    if (usage >= 2) {
-      setFreeLimitReached(true);
+    
+    // Check if user is on Free plan and has reached limit
+    if (freeLimitReached) {
       toast("You have reached the free usage limit. Please upgrade to continue.", { style: { color: "red" } });
       return;
     }
+    
     try {
       setIsLoading(true);
 
@@ -135,9 +181,22 @@ export default function UploadForm() {
             userId: userId || undefined, // ensure string or undefined
             email, // pass real email
           });
-          // Increment free usage count
-          const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
-          localStorage.setItem("free_upload_count", (usage + 1).toString());
+          
+          // Only increment localStorage for Free plan users
+          const response = await fetch('/api/user/plan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+          });
+          
+          if (response.ok) {
+            const { planId } = await response.json();
+            if (planId === 'free') {
+              // Increment free usage count only for Free users
+              const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
+              localStorage.setItem("free_upload_count", (usage + 1).toString());
+            }
+          }
 
           toast("✨ Summary Generated!", {
             description:
@@ -156,6 +215,14 @@ export default function UploadForm() {
       setIsLoading(false);
     }
   };
+
+  if (isCheckingPlan) {
+    return (
+      <div className="text-center text-gray-600">
+        Loading...
+      </div>
+    );
+  }
 
   if (freeLimitReached) {
     return (

@@ -60,7 +60,7 @@ export default function HeroSection() {
           onClick={() => router.push(isSignedIn ? "/upload" : "/sign-in")}
         >
           <span className="flex gap-2 items-center">
-            <span>Try Summarize</span>
+            <span>Try ConciseDocs</span>
             <ArrowRight className="animate-pulse" />
           </span>
         </Button>

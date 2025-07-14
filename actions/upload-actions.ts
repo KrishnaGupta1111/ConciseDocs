@@ -31,19 +31,17 @@ export async function generatePdfSummary({
     };
   }
 
-
-
-  if (!fileUrl) {
-    return {
-      success: false,
-      message: "File upload failed",
-      data: null,
-    };
-  }
-
   try {
     const pdfText = await fetchAndExtractPdfText(fileUrl);
-    console.log({ pdfText });
+    console.log("Extracted PDF text:", pdfText); // Add this log
+
+    if (!pdfText || pdfText.trim().length === 0) {
+      return {
+        success: false,
+        message: "The uploaded PDF appears to be empty or could not be read.",
+        data: null,
+      };
+    }
 
     let summary;
     try {
