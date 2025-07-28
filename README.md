@@ -80,7 +80,7 @@ This project helped me deeply understand:
 - LangChain integration with LLMs (Gemini/GPT-4)
 - Uploading and handling large files securely
 
-It was inspired by the Sommaire AI SaaS concept but customized with new features and pricing logic.
+
 
 
 
