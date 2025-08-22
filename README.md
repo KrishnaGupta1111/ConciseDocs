@@ -10,7 +10,6 @@ Built using **Next.js 15**, **LangChain**, and **Gemini/GPT-4**, this applicatio
 
 ## ✨ Features
 
-
 - 🧠 **AI Summarization**: Get concise key points from any PDF using Gemini or GPT-4 via LangChain.
 - 🎨 **Instagram-style Visual Viewer**: Interactive, swipeable summaries that look beautiful.
 - 🔐 **Protected Routes & Secure API**: Authentication and route protection via Clerk.
