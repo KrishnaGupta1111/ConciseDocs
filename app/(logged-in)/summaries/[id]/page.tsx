@@ -3,6 +3,7 @@ import { MotionDiv } from "@/components/common/motion-wrapper";
 import { SourceInfo } from "@/components/summaries/source-info";
 import { SummaryHeader } from "@/components/summaries/summary-header";
 import { SummaryViewer } from "@/components/summaries/summary-viewer";
+import { ChatInterface } from "@/components/summaries/ChatInterface";
 import { getSummaryById } from "@/lib/summaries";
 import { FileText } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -77,6 +78,16 @@ export default async function SummaryPage({ params }: SummaryPageProps) {
                   <SummaryViewer summary={summary_text} />
                 </div>
               </div>
+            </MotionDiv>
+
+            {/* Chat with PDF interface */}
+            <MotionDiv
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="relative mt-4 sm:mt-8 lg:mt-12"
+            >
+              <ChatInterface summaryId={id} />
             </MotionDiv>
           </MotionDiv>
         </div>

@@ -1,3 +1,7 @@
+export const sanitizeMarkdown = (text: string): string => {
+  return text.replace(/([*_`~])/g, "\\$1");
+};
+
 export const parseSection = (
   section: string,
 ): { title: string; points: string[] } => {
@@ -26,11 +30,13 @@ export const parseSection = (
   if (currentPoint) points.push(currentPoint.trim());
 
   return {
-    title: cleanTitle,
-    points: points.filter(
-      (point) =>
-        point && !point.startsWith("#") && !point.startsWith("[Choose"),
-    ),
+    title: sanitizeMarkdown(cleanTitle),
+    points: points
+      .filter(
+        (point) =>
+          point && !point.startsWith("#") && !point.startsWith("[Choose"),
+      )
+      .map((point) => sanitizeMarkdown(point)),
   };
 };
 

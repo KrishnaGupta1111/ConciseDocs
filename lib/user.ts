@@ -75,6 +75,23 @@ export async function hasReachedUploadLimit(userId: string) {
   return { hasReachedLimit: uploadCount >= uploadLimit, uploadLimit };
 }
 
+// Resolve the effective user id stored in DB for a given Clerk user.
+// If a row exists for the user's email, return that row's id. Otherwise, fall back to Clerk's user.id
+export async function getEffectiveUserId(user: User) {
+  const sql = await getDbConnection();
+  const email = user.emailAddresses[0]?.emailAddress;
+  if (!email) return user.id;
+  try {
+    const rows = await sql`SELECT id FROM users WHERE email = ${email} AND status = 'active'`;
+    if (rows && rows[0]?.id) {
+      return rows[0].id as string;
+    }
+  } catch (err) {
+    console.error("getEffectiveUserId error", err);
+  }
+  return user.id;
+}
+
 export async function getSubscriptionStatus(user: User) {
   const hasSubscription = await hasActivePlan(
     user.emailAddresses[0].emailAddress,

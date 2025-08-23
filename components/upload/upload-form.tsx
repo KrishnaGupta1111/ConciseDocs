@@ -67,7 +67,7 @@ export default function UploadForm() {
               localStorage.getItem("free_upload_count") || "0",
               10,
             );
-            if (usage >= 2) {
+            if (usage >= 4) {
               setFreeLimitReached(true);
             }
           } else {

@@ -1,8 +1,8 @@
 "use server";
 
 import { getDbConnection } from "@/lib/db";
-import { generateSummaryFromGemini } from "@/lib/gemini-ai";
-import { fetchAndExtractPdfText } from "@/lib/langchain";
+import { generateSummaryFromGemini, generateEmbeddings } from "@/lib/gemini-ai";
+import { fetchAndExtractPdfText, splitTextIntoChunks } from "@/lib/langchain";
 import { formatFileNameAsTitle } from "@/utils/format-utils";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
@@ -133,18 +133,20 @@ export async function storePdfSummaryAction({
     }
     const sql = await getDbConnection();
 
-    // Always upsert the user row for every signed-in user
-    console.log("Upserting user row for userId:", userId, "email:", email);
-    await sql`
+    // Upsert user by unique email and use the stored id (prevents duplicate email conflicts)
+    console.log("Upserting user by email. Requested userId:", userId, "email:", email);
+    const [userRow] = await sql`
       INSERT INTO users (id, email, price_id, status)
       VALUES (${userId}, ${email}, ${null}, 'active')
-      ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email
+      ON CONFLICT (email) DO UPDATE SET status = 'active'
+      RETURNING id
     `;
-    console.log("User upserted for userId:", userId);
+    const effectiveUserId = userRow.id as string;
+    console.log("User upserted. Effective userId used for summary:", effectiveUserId);
 
     // ✅ 3. Save the summary
     savedSummary = await savePdfSummary({
-      userId,
+      userId: effectiveUserId,
       fileUrl,
       summary,
       title,
@@ -158,6 +160,37 @@ export async function storePdfSummaryAction({
         message: "Failed to save PDF summary, please try again",
       };
     }
+
+    // --- Start of new code for chunking and embedding ---
+
+    // 4. Fetch the full PDF text again for chunking
+    const pdfText = await fetchAndExtractPdfText(fileUrl);
+
+    if (pdfText) {
+      // 5. Split the text into chunks
+      const chunks = await splitTextIntoChunks(pdfText);
+
+      // 6. Generate embeddings for each chunk
+      const embeddings = await generateEmbeddings(chunks);
+
+      // 7. Save chunks and embeddings to the database
+      for (let i = 0; i < chunks.length; i++) {
+        const chunkText = chunks[i];
+        const embedding = embeddings[i];
+        const vectorString = `[${embedding.join(",")}]`;
+
+        await sql`
+          INSERT INTO pdf_chunks (summary_id, chunk_text, embedding)
+          VALUES (${savedSummary.id}, ${chunkText}, ${vectorString}::vector)
+        `;
+      }
+      console.log(`Saved ${chunks.length} chunks for summaryId: ${savedSummary.id}`);
+    } else {
+      console.warn(`Could not extract text from PDF for chunking. SummaryId: ${savedSummary.id}`);
+    }
+
+    // --- End of new code ---
+
   } catch (error) {
     console.error("Error in storePdfSummaryAction:", error);
     return {

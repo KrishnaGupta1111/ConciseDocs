@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { SUMMARY_SYSTEM_PROMPT } from "@/utils/prompts";
 
 //initialize the gemini api with your api key
@@ -27,6 +28,21 @@ export const generateSummaryFromGemini = async (pdfText: string) => {
     return result.candidates[0].content.parts[0].text;
   } catch (error: any) {
     console.error("Gemini API error:", error);
+    throw error;
+  }
+};
+
+export const generateEmbeddings = async (chunks: string[]) => {
+  try {
+    const embeddings = new GoogleGenerativeAIEmbeddings({
+      model: "embedding-001",
+      apiKey: process.env.GEMINI_API_KEY,
+    });
+
+    const vectors = await embeddings.embedDocuments(chunks);
+    return vectors;
+  } catch (error: any) {
+    console.error("Gemini embedding error:", error);
     throw error;
   }
 };

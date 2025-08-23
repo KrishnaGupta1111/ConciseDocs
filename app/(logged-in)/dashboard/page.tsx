@@ -8,7 +8,7 @@ import EmptySummaryState from "@/components/summaries/empty-summary-state";
 import SummaryCard from "@/components/summaries/summary-card";
 import { Button } from "@/components/ui/button";
 import { getSummaries } from "@/lib/summaries";
-import { hasReachedUploadLimit } from "@/lib/user";
+import { getEffectiveUserId, hasReachedUploadLimit } from "@/lib/user";
 import { itemVariants } from "@/utils/constants";
 import { currentUser } from "@clerk/nextjs/server";
 import { ArrowRight, Plus } from "lucide-react";
@@ -17,7 +17,7 @@ import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
   const user = await currentUser();
-  const userId = user?.id;
+  const userId = user ? await getEffectiveUserId(user) : undefined;
   if (!userId) return redirect("/sign-in");
 
   const { hasReachedLimit, uploadLimit } = await hasReachedUploadLimit(userId);
