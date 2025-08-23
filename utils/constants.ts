@@ -1,4 +1,3 @@
-
 export const pricingPlans = [
   {
     name: "Free",
@@ -23,8 +22,8 @@ export const pricingPlans = [
       "Email support",
     ],
     id: "basic",
-    paymentLink:  "https://buy.stripe.com/test_eVqdR24SJgWifhO67SbQY00",
-    priceId:  "price_1Rk2f24YwZh7aTvkBg802QLl",
+    paymentLink: "https://buy.stripe.com/test_eVqdR24SJgWifhO67SbQY00",
+    priceId: "price_1Rk2f24YwZh7aTvkBg802QLl",
   },
   {
     name: "Pro",
@@ -38,7 +37,7 @@ export const pricingPlans = [
     ],
     id: "pro",
     paymentLink: "https://buy.stripe.com/test_bJe28k84V5dA5HedAkbQY01",
-    priceId:  "price_1Rk2fp4YwZh7aTvkpWaoRjtE",
+    priceId: "price_1Rk2fp4YwZh7aTvkpWaoRjtE",
   },
 ];
 

@@ -1,12 +1,10 @@
-
 ## 📄 ConciseDocs – AI Powered PDF Summarization
+
 [![Screenshot-2025-07-18-235259.png](https://i.postimg.cc/FHbxJBb4/Screenshot-2025-07-18-235259.png)](https://postimg.cc/bZJn7LFC)
 
 **ConciseDocs** is a modern, full-stack AI SaaS platform that lets users upload PDFs and receive **clear, structured, and visually engaging summaries** — like an Instagram reel for your documents.
 
 Built using **Next.js 15**, **LangChain**, and **Gemini/GPT-4**, this application provides both **free and paid tiers**, ensuring users can try it out before subscribing. The UI is fully responsive and beautifully crafted using **ShadCN UI + Tailwind CSS v4**.
-
-
 
 ## ✨ Features
 
@@ -23,33 +21,30 @@ Built using **Next.js 15**, **LangChain**, and **Gemini/GPT-4**, this applicatio
 
 ## 🔗 Demo
 
-> 🟢 [Live Demo](https://concisedocs.vercel.app) 
- 
- > 💻 [Source Code](https://github.com/KrishnaGupta1111/ConciseDocs) 
+> 🟢 [Live Demo](https://concisedocs.vercel.app)
 
+> 💻 [Source Code](https://github.com/KrishnaGupta1111/ConciseDocs)
 
 ## 🛠️ Tech Stack
 
-| Category     | Technologies                                                                 |
-|--------------|------------------------------------------------------------------------------|
-| 🖥️ Frontend   | Next.js 15, React 19, Tailwind CSS v4, ShadCN UI                             |
-| 🧠 Backend    | LangChain, Gemini AI / OpenAI (GPT-4)                                         |
-| 🔐 Auth       | Clerk (Passkeys, GitHub, Google login)                                       |
-| 📦 Database   | NeonDB (PostgreSQL)                                                          |
-| 📁 Uploads    | UploadThing                                                                  |
-| 💳 Payments   | Stripe (with webhook support)                                                |
-| 🔔 Notifications | React Hot Toast                                                        |
-| 🔤 Language    | TypeScript                                                                  |
+| Category         | Technologies                                     |
+| ---------------- | ------------------------------------------------ |
+| 🖥️ Frontend      | Next.js 15, React 19, Tailwind CSS v4, ShadCN UI |
+| 🧠 Backend       | LangChain, Gemini AI / OpenAI (GPT-4)            |
+| 🔐 Auth          | Clerk (Passkeys, GitHub, Google login)           |
+| 📦 Database      | NeonDB (PostgreSQL)                              |
+| 📁 Uploads       | UploadThing                                      |
+| 💳 Payments      | Stripe (with webhook support)                    |
+| 🔔 Notifications | React Hot Toast                                  |
+| 🔤 Language      | TypeScript                                       |
 
 ## 💸 Pricing Plans
 
-
-| Plan   | Features                                                         |
-|--------|------------------------------------------------------------------|
-| Free   | 2 summaries, markdown export, basic PDF parsing                  |
-| Basic    | 5 summaries, fast processing, premium UI , Free Donwload      |
-| Pro    | Unlimited usage, fast processing, premium UI, full access  , Free Donwload     |
-
+| Plan  | Features                                                                  |
+| ----- | ------------------------------------------------------------------------- |
+| Free  | 2 summaries, markdown export, basic PDF parsing                           |
+| Basic | 5 summaries, fast processing, premium UI , Free Donwload                  |
+| Pro   | Unlimited usage, fast processing, premium UI, full access , Free Donwload |
 
 ## 🧩 Folder Structure
 
@@ -62,6 +57,7 @@ ConciseDocs/
 ├── styles/
 └── utils/
 ```
+
 ## 🐛 Known Issues
 
 - PDF files larger than 32MB are not supported
@@ -69,6 +65,7 @@ ConciseDocs/
 - No dark mode yet (coming soon!)
 
 > If you encounter bugs, please create an issue or open a PR!
+
 ## 🎯 Why I Built This
 
 This project helped me deeply understand:
@@ -78,10 +75,6 @@ This project helped me deeply understand:
 - Building secure Stripe billing flows
 - LangChain integration with LLMs (Gemini/GPT-4)
 - Uploading and handling large files securely
-
-
-
-
 
 ## Run Locally
 
@@ -109,8 +102,6 @@ Start the server
   npm run start
 ```
 
-
-
 ## 🔐 Environment Variables
 
 Create a `.env.local` file in the root and add the following:
@@ -130,6 +121,7 @@ DATABASE_URL=your_neondb_url
 UPLOADTHING_SECRET=your_uploadthing_secret
 UPLOADTHING_APP_ID=your_uploadthing_app_id
 ```
+
 ## 🤝 Contributing
 
 Contributions are welcome!
@@ -150,14 +142,11 @@ Please follow the [Code of Conduct](./CODE_OF_CONDUCT.md) and [Contributing Guid
 💼 [LinkedIn](https://linkedin.com/in/krishnagupta111/)  
 📧 guptakrish1947@gmail.com
 
-
 ## 📜 License
 
 This project is licensed under the **MIT License**.  
 Feel free to use, modify, and distribute.
 
-
 ## 🙏 Acknowledgements
-
 
 - Thanks to the open-source tools that power this project: LangChain, Clerk, UploadThing, Stripe, and TailwindCSS

@@ -8,10 +8,12 @@ export async function getPriceIdForActiveUser(identifier: string) {
   const sql = await getDbConnection();
 
   // Try by email first
-  let query = await sql`SELECT price_id FROM users WHERE email = ${identifier} AND status = 'active'`;
+  let query =
+    await sql`SELECT price_id FROM users WHERE email = ${identifier} AND status = 'active'`;
   if (!query?.[0]) {
     // Try by userId
-    query = await sql`SELECT price_id FROM users WHERE id = ${identifier} AND status = 'active'`;
+    query =
+      await sql`SELECT price_id FROM users WHERE id = ${identifier} AND status = 'active'`;
   }
   return query?.[0]?.price_id || null;
 }
@@ -28,17 +30,20 @@ export async function hasActivePlan(emailOrId: string) {
   }
 
   // Check if user is on Free plan (active, price_id is NULL) by email
-  let freeQuery = await sql`SELECT id FROM users WHERE email = ${emailOrId} AND status = 'active' AND price_id IS NULL`;
+  let freeQuery =
+    await sql`SELECT id FROM users WHERE email = ${emailOrId} AND status = 'active' AND price_id IS NULL`;
   if (freeQuery && freeQuery.length > 0) {
     return true;
   }
 
   // Fallback: check by userId
-  query = await sql`SELECT price_id,status FROM users WHERE id = ${emailOrId} AND status = 'active' AND price_id IS NOT NULL`;
+  query =
+    await sql`SELECT price_id,status FROM users WHERE id = ${emailOrId} AND status = 'active' AND price_id IS NOT NULL`;
   if (query && query.length > 0) {
     return true;
   }
-  freeQuery = await sql`SELECT id FROM users WHERE id = ${emailOrId} AND status = 'active' AND price_id IS NULL`;
+  freeQuery =
+    await sql`SELECT id FROM users WHERE id = ${emailOrId} AND status = 'active' AND price_id IS NULL`;
   if (freeQuery && freeQuery.length > 0) {
     return true;
   }
@@ -71,6 +76,8 @@ export async function hasReachedUploadLimit(userId: string) {
 }
 
 export async function getSubscriptionStatus(user: User) {
-  const hasSubscription = await hasActivePlan(user.emailAddresses[0].emailAddress);
+  const hasSubscription = await hasActivePlan(
+    user.emailAddresses[0].emailAddress,
+  );
   return hasSubscription;
 }

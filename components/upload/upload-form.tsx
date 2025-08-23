@@ -10,7 +10,7 @@ import {
 } from "@/actions/upload-actions";
 import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import  LoadingSkeleton  from "./loading-skeleton";
+import LoadingSkeleton from "./loading-skeleton";
 import { useAuth, useUser } from "@clerk/nextjs";
 //schema with zod
 
@@ -19,11 +19,11 @@ const schema = z.object({
     .instanceof(File, { message: "Invalid file" })
     .refine(
       (file) => file.size <= 20 * 1024 * 1024,
-      "File size must be less than 20MB"
+      "File size must be less than 20MB",
     )
     .refine(
       (file) => file.type.startsWith("application/pdf"),
-      "File must be a PDF"
+      "File must be a PDF",
     ),
 });
 
@@ -35,7 +35,10 @@ export default function UploadForm() {
   const router = useRouter();
   const { userId } = useAuth();
   const { user } = useUser();
-  const email = user?.primaryEmailAddress?.emailAddress || user?.emailAddresses?.[0]?.emailAddress || undefined;
+  const email =
+    user?.primaryEmailAddress?.emailAddress ||
+    user?.emailAddresses?.[0]?.emailAddress ||
+    undefined;
 
   // Check user plan and free usage count on mount
   useEffect(() => {
@@ -47,20 +50,23 @@ export default function UploadForm() {
 
       try {
         // Fetch user's plan from the database
-        const response = await fetch('/api/user/plan', {
-          method: 'POST',
+        const response = await fetch("/api/user/plan", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email })
+          body: JSON.stringify({ email }),
         });
 
         if (response.ok) {
           const { planId } = await response.json();
-          
+
           // Only check localStorage for Free plan users
-          if (planId === 'free') {
-            const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
+          if (planId === "free") {
+            const usage = parseInt(
+              localStorage.getItem("free_upload_count") || "0",
+              10,
+            );
             if (usage >= 2) {
               setFreeLimitReached(true);
             }
@@ -70,15 +76,21 @@ export default function UploadForm() {
           }
         } else {
           // If API fails, fallback to localStorage check
-          const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
+          const usage = parseInt(
+            localStorage.getItem("free_upload_count") || "0",
+            10,
+          );
           if (usage >= 2) {
             setFreeLimitReached(true);
           }
         }
       } catch (error) {
-        console.error('Error checking user plan:', error);
+        console.error("Error checking user plan:", error);
         // Fallback to localStorage check
-        const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
+        const usage = parseInt(
+          localStorage.getItem("free_upload_count") || "0",
+          10,
+        );
         if (usage >= 2) {
           setFreeLimitReached(true);
         }
@@ -107,13 +119,16 @@ export default function UploadForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // Check if user is on Free plan and has reached limit
     if (freeLimitReached) {
-      toast("You have reached the free usage limit. Please upgrade to continue.", { style: { color: "red" } });
+      toast(
+        "You have reached the free usage limit. Please upgrade to continue.",
+        { style: { color: "red" } },
+      );
       return;
     }
-    
+
     try {
       setIsLoading(true);
 
@@ -122,7 +137,7 @@ export default function UploadForm() {
 
       //validating the fields
       const validatedFields = schema.safeParse({ file });
-      
+
       if (!validatedFields.success) {
         toast("❌ Something went wrong", {
           description:
@@ -154,12 +169,12 @@ export default function UploadForm() {
         description: "Hang tight! Our AI is reading through your document! ✨",
       });
 
-      const uploadFileUrl=uploadResponse[0].serverData.fileUrl;
+      const uploadFileUrl = uploadResponse[0].serverData.fileUrl;
 
       //parse the pdf using lang chain
       const result = await generatePdfSummary({
-        fileUrl:uploadFileUrl,
-        fileName:file.name,
+        fileUrl: uploadFileUrl,
+        fileName: file.name,
       });
 
       const { data = null, message = null } = result || {};
@@ -181,19 +196,22 @@ export default function UploadForm() {
             userId: userId || undefined, // ensure string or undefined
             email, // pass real email
           });
-          
+
           // Only increment localStorage for Free plan users
-          const response = await fetch('/api/user/plan', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
+          const response = await fetch("/api/user/plan", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
           });
-          
+
           if (response.ok) {
             const { planId } = await response.json();
-            if (planId === 'free') {
+            if (planId === "free") {
               // Increment free usage count only for Free users
-              const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
+              const usage = parseInt(
+                localStorage.getItem("free_upload_count") || "0",
+                10,
+              );
               localStorage.setItem("free_upload_count", (usage + 1).toString());
             }
           }
@@ -217,11 +235,7 @@ export default function UploadForm() {
   };
 
   if (isCheckingPlan) {
-    return (
-      <div className="text-center text-gray-600">
-        Loading...
-      </div>
-    );
+    return <div className="text-center text-gray-600">Loading...</div>;
   }
 
   if (freeLimitReached) {
@@ -267,7 +281,7 @@ export default function UploadForm() {
             </div>
           </div>
 
-          <LoadingSkeleton/>
+          <LoadingSkeleton />
         </>
       )}
     </div>

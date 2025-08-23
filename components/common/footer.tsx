@@ -13,10 +13,18 @@ export default function Footer() {
 
         {/* Navigation */}
         <nav className="flex flex-wrap gap-4 text-gray-600 text-sm">
-          <Link href="/" className="hover:text-rose-600 transition">Home</Link>
-          <Link href="/#pricing" className="hover:text-rose-600 transition">Pricing</Link>
-          <Link href="/dashboard" className="hover:text-rose-600 transition">Dashboard</Link>
-          <Link href="/upload" className="hover:text-rose-600 transition">Upload</Link>
+          <Link href="/" className="hover:text-rose-600 transition">
+            Home
+          </Link>
+          <Link href="/#pricing" className="hover:text-rose-600 transition">
+            Pricing
+          </Link>
+          <Link href="/dashboard" className="hover:text-rose-600 transition">
+            Dashboard
+          </Link>
+          <Link href="/upload" className="hover:text-rose-600 transition">
+            Upload
+          </Link>
         </nav>
 
         {/* Copyright */}

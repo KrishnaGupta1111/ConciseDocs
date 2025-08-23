@@ -22,22 +22,25 @@ export default function UploadPage() {
 
       try {
         // Fetch user's plan from the database
-        const response = await fetch('/api/user/plan', {
-          method: 'POST',
+        const response = await fetch("/api/user/plan", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: user.primaryEmailAddress.emailAddress
-          })
+            email: user.primaryEmailAddress.emailAddress,
+          }),
         });
 
         if (response.ok) {
           const { planId } = await response.json();
-          
+
           // Only check localStorage for Free plan users
-          if (planId === 'free') {
-            const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
+          if (planId === "free") {
+            const usage = parseInt(
+              localStorage.getItem("free_upload_count") || "0",
+              10,
+            );
             if (usage >= 2) {
               setFreeLimitReached(true);
             }
@@ -47,15 +50,21 @@ export default function UploadPage() {
           }
         } else {
           // If API fails, fallback to localStorage check
-          const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
+          const usage = parseInt(
+            localStorage.getItem("free_upload_count") || "0",
+            10,
+          );
           if (usage >= 2) {
             setFreeLimitReached(true);
           }
         }
       } catch (error) {
-        console.error('Error checking user plan:', error);
+        console.error("Error checking user plan:", error);
         // Fallback to localStorage check
-        const usage = parseInt(localStorage.getItem("free_upload_count") || "0", 10);
+        const usage = parseInt(
+          localStorage.getItem("free_upload_count") || "0",
+          10,
+        );
         if (usage >= 2) {
           setFreeLimitReached(true);
         }
@@ -66,8 +75,6 @@ export default function UploadPage() {
 
     checkUserPlan();
   }, [user]);
-
-
 
   if (isLoading) {
     return (
